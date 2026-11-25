@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Restart dsh">
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#2477d4"/>
+  <circle cx="32" cy="33" r="15.5" fill="none" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" stroke-dasharray="74 24" transform="rotate(-45 32 33)"/>
+  <path d="M45.5 16.5 L46.5 27.5 L35.8 26.2" fill="none" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="33" r="4.6" fill="#ffffff"/>
+</svg>

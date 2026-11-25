@@ -1,0 +1,56 @@
+{
+  "name": "dsh-lsit-restart",
+  "version": "1.1.0",
+  "private": false,
+  "type": "module",
+  "description": "DSH restart button with vertical sidebar placement, account-menu visibility toggle, and model-preserving restart.",
+  "description_zh": "在 DSH 侧边栏用户按钮上方竖向放置「重启 DSH」按钮，可在用户菜单中显示/隐藏，并保持当前默认模型重启。",
+  "author": "lsit27",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsit27/dsh-restart.git"
+  },
+  "homepage": "https://github.com/lsit27/dsh-restart",
+  "bugs": "https://github.com/lsit27/dsh-restart/issues",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "restart"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "restart-helper.mjs",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "docs",
+    "assets",
+    "screenshots.json",
+    "icon.svg",
+    "README.md",
+    "SUBMISSION.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    }
+  }
+}

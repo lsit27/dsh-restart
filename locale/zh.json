@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "重启 DSH（竖向按钮）",
+    "description": "在侧边栏用户按钮上方竖向放置「重启 DSH」按钮，可在按钮旁显示/隐藏，重启时沿用当前默认模型。",
+    "detail": "docs/DETAIL.md"
+  }
+}

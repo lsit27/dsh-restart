@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Restart DSH (vertical)",
+    "description": "Places a Restart DSH button vertically above the sidebar user button, toggleable next to the button, and restarts with the current default model.",
+    "detail": "docs/DETAIL.md"
+  }
+}
