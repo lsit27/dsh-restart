@@ -1,4 +1,4 @@
-# dsh-lsit-restart bundle patch: register the restart plugin in the profile.
+# dsh-restart bundle patch: register the restart plugin in the profile.
 - insert:
     - id: dsh-restart
-      name: dsh-lsit-restart
+      name: dsh-restart

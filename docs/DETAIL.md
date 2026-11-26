@@ -48,5 +48,5 @@ The new process starts with the default model that was selected when you clicked
 
 ## Disable
 
-Disable `dsh-lsit-restart` in Settings → Plugins, or remove it from the profile with
-`dsh plugin --profile web remove dsh-lsit-restart`. The button and API disappear after reload.
+Disable `dsh-restart` in Settings → Plugins, or remove it from the profile with
+`dsh plugin --profile web remove dsh-restart`. The button and API disappear after reload.

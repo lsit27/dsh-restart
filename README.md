@@ -1,4 +1,4 @@
-# dsh-lsit-restart
+# dsh-restart
 
 Restart the DeepSeek Harness (DSH) process from the Web UI. The restart button is placed
 vertically **above the sidebar user/account button**, and its visibility can be toggled from
@@ -31,7 +31,7 @@ The repo root declares a `dsh.bundle` manifest and `cordis.patch.yml`, so this w
 dsh plugin --profile web add "https://github.com/lsit27/dsh-restart"
 ```
 
-`dsh-lsit-restart` is the npm package name; GitHub installs do not depend on npm publishing.
+The package name matches the repository name (`dsh-restart`); installing from GitHub does not depend on npm publishing.
 
 ## Usage
 

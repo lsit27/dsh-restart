@@ -17,5 +17,5 @@ icon: https://raw.githubusercontent.com/lsit27/dsh-restart/main/assets/icon-180.
 ```
 
 Note: the `dsh-plugin` GitHub topic must be added to the repository (topics can only be set by
-the repo owner). Also consider publishing the npm package `dsh-lsit-restart` with its
+the repo owner). Also consider publishing the npm package `dsh-restart` with its
 `repository` field pointing at this repo; that is optional for listing but improves install UX.

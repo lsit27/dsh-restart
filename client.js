@@ -1,5 +1,5 @@
 /**
- * dsh-lsit-restart client half.
+ * dsh-restart client half.
  *
  * UI contract:
  *   - The restart button sits in `sidebar.footer.action`, immediately ABOVE the
