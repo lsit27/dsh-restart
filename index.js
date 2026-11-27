@@ -92,6 +92,12 @@ export function apply(ctx) {
     }
   }
 
+  /** 运行环境：fnOS 应用中心启动 dsh 时会注入 DSH_BIN / DSH_UPSTREAM_HOST。 */
+  const detectEnvironment = () =>
+    process.env.DSH_BIN !== undefined && process.env.DSH_UPSTREAM_HOST !== undefined
+      ? 'fnos'
+      : 'standalone'
+
   const statusPayload = () => {
     const model = readModelSelection(ctx, logger)
     const url = origin()
@@ -100,6 +106,7 @@ export function apply(ctx) {
       origin: url,
       port: parsePort(url),
       model,
+      environment: detectEnvironment(),
       startedAt: STARTED_AT,
       node: process.version,
       entry: process.argv[1] ?? '',

@@ -195,6 +195,65 @@ window.__ModuleLoader__.load({
       return body.data
     }
 
+    /**
+     * 是否处于 fnOS 应用网关之下。
+     *
+     * fnOS 的应用网关会给 HTML 注入 `<base href="/app/<应用名>/">`；本地 `dsh web`
+     * 没有这条标记。这是唯一能同时覆盖 iframe 与独立浏览器页面的判据。
+     */
+    function isFnosGatewayHosted() {
+      try {
+        const base = document.querySelector('base')?.href
+        if (base === undefined || base === '') return false
+        return new URL(base).pathname.startsWith('/app/')
+      } catch {
+        return false
+      }
+    }
+
+    /**
+     * 网关控制地址：相对 `<base>` 解析，保证 iframe 与独立页面都能打到应用网关，
+     * 而不是宿主根路径。
+     */
+    function gatewayControlUrl(path) {
+      try {
+        const base = document.querySelector('base')?.href
+        if (base !== undefined && base !== '') {
+          return new URL(path.replace(/^\//, ''), base).toString()
+        }
+      } catch {
+        // 回落到原路径
+      }
+      return path
+    }
+
+    /**
+     * fnOS 下的正确重启方式：交给应用网关的 WebProcessController。
+     *
+     * 网关会终止旧的 dsh 进程、更新 pid/token/lock 文件，再用同一套入口与环境
+     * 重新拉起 dsh。不要用 detached spawn 直接重启——那样会脱离 fnOS 应用中心
+     * 的进程管理，pid、启动 token、锁文件都不会更新。
+     */
+    async function postFnosRestart() {
+      const response = await fetch(gatewayControlUrl('/__fnos-gateway/control/web/restart'), {
+        method: 'POST',
+        headers: { 'x-requested-with': 'fetch' },
+        credentials: 'same-origin',
+        cache: 'no-store',
+      })
+      if (!response.ok) {
+        let message = `HTTP ${response.status}`
+        try {
+          const body = await response.json()
+          if (body !== null && typeof body.error === 'string') message = body.error
+        } catch {
+          // 响应不是 JSON 时保留状态码文案
+        }
+        throw new Error(message)
+      }
+      return true
+    }
+
     /** Poll /status until the new process mounts the route again. */
     async function waitForServer(timeoutMs) {
       const started = Date.now()
@@ -226,6 +285,14 @@ window.__ModuleLoader__.load({
           setPhase('busy')
           setMessage('')
           try {
+            if (isFnosGatewayHosted()) {
+              // fnOS：网关负责终止旧进程并重启 dsh，稍等后刷新页面即可接上新进程。
+              await postFnosRestart()
+              setPhase('restarting')
+              await sleep(900)
+              window.location.reload()
+              return
+            }
             await postRestart()
             setPhase('restarting')
             const back = await waitForServer(120000)
@@ -375,6 +442,67 @@ window.__ModuleLoader__.load({
             Button,
           ),
         )
+
+        // fnOS 网关环境：在「飞牛 OS」下拉菜单里注入「重启 DSH」项。
+        //
+        // dsh-fnos 的菜单是硬编码组件（飞牛设置/刷新/重启），没有暴露 slot 扩展点，
+        // 因此这里用 MutationObserver 监听菜单打开，克隆最后一项并替换文字与点击行为，
+        // 保证与现有菜单项视觉一致。点击走网关的 WebProcessController，这是 fnOS 下
+        // 唯一正确的重启入口；页面会在网关重启 dsh 后刷新。
+        ctx.effect(() => {
+          if (typeof document === 'undefined') return () => {}
+          if (!isFnosGatewayHosted()) return () => {}
+          if (typeof MutationObserver === 'undefined') return () => {}
+
+          const injectItem = () => {
+            const menu = document.querySelector('.dsh-fnos-footer-menu')
+            if (menu === null) return
+            if (menu.querySelector('[data-dsh-restart-injected]') !== null) return
+            const items = menu.querySelectorAll('[role="menuitem"]')
+            if (items.length === 0) return
+            const source = items[items.length - 1]
+            const clone = source.cloneNode(true)
+            if (!(clone instanceof HTMLElement)) return
+
+            // 只替换可见文字，保留克隆项自带的图标与结构。
+            const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT)
+            let textNode = null
+            while (walker.nextNode()) {
+              const node = walker.currentNode
+              if (node.nodeValue !== null && node.nodeValue.trim() !== '') {
+                textNode = node
+              }
+            }
+            if (textNode !== null) textNode.nodeValue = translate('action')
+
+            clone.setAttribute('data-dsh-restart-injected', '')
+            clone.removeAttribute('disabled')
+            clone.removeAttribute('aria-disabled')
+            clone.addEventListener('click', (event) => {
+              event.preventDefault()
+              event.stopPropagation()
+              void postFnosRestart()
+                .then(() => {
+                  window.setTimeout(() => window.location.reload(), 900)
+                })
+                .catch((error) => {
+                  console.error('[dsh-restart] fnOS restart failed:', error)
+                })
+            })
+            menu.appendChild(clone)
+          }
+
+          const observer = new MutationObserver(injectItem)
+          observer.observe(document.body, { childList: true, subtree: true })
+          injectItem()
+          return () => {
+            try {
+              observer.disconnect()
+            } catch {
+              // 忽略断开失败
+            }
+          }
+        }, 'dsh-restart-fnos-menu')
 
       },
     }

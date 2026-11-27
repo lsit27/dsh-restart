@@ -1,10 +1,10 @@
 {
   "name": "dsh-restart",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": false,
   "type": "module",
-  "description": "DSH restart button with vertical sidebar placement, account-menu visibility toggle, and model-preserving restart.",
-  "description_zh": "在 DSH 侧边栏用户按钮上方竖向放置「重启 DSH」按钮，可在用户菜单中显示/隐藏，并保持当前默认模型重启。",
+  "description": "DSH restart button with environment detection: on fnOS it restarts through the application gateway and injects a restart item into the fnOS sidebar menu; elsewhere it keeps the vertical sidebar button. Restart preserves the current default model.",
+  "description_zh": "「重启 DSH」按钮：自动判断系统环境，飞牛 OS 下通过应用网关正确重启并注入飞牛 OS 侧边栏菜单，其他环境保持竖向按钮；重启时沿用当前默认模型。",
   "author": "lsit27",
   "license": "MIT",
   "repository": {
